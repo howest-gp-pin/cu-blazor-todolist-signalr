@@ -1,0 +1,45 @@
+﻿@page "/todo"
+@using TodoList.Web.Domain;
+@using TodoList.Web.Services;
+<h3>Todo</h3>
+
+<ul>
+    @foreach (var item in items)
+    {
+        <li>@item.Title</li>
+    }
+</ul>
+
+<input placeholder="type a new todo" @bind="todoTitle" />
+<button @onclick="AddTodo">Add todo</button>
+
+@code {
+
+    private TodoClient todoClient;
+    private IList<TodoItem> items = new List<TodoItem>();
+    private string todoTitle;
+
+    protected async override Task OnInitializedAsync()
+    {
+        todoClient = new TodoClient(OnRemoteItem);
+        await todoClient.Start();
+    }
+
+    private async void AddTodo()
+    {
+        var todoItem = new TodoItem
+        {
+            Title = todoTitle
+        };
+
+        items.Add(todoItem);
+
+        await todoClient.AddItem(todoItem);
+    }
+
+    private void OnRemoteItem(TodoItem addedItem)
+    {
+        items.Add(addedItem);
+        this.StateHasChanged();
+    }
+}
