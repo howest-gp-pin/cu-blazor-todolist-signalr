@@ -21,7 +21,8 @@
 
     protected async override Task OnInitializedAsync()
     {
-        todoClient = new TodoClient(OnRemoteItem);
+        todoClient = new TodoClient();
+        todoClient.Configure(OnRemoteItem);
         await todoClient.Start();
     }
 

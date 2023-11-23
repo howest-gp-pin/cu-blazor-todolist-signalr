@@ -11,23 +11,23 @@ namespace TodoList.Web.Services
     public class TodoClient
     {
         protected HubConnection connection = null;
-        protected Action<TodoItem> callback;
-
-        public TodoClient(Action<TodoItem> callback)
+        public TodoClient()
         {
-            this.callback = callback;
-
             connection = new HubConnectionBuilder()
                .WithUrl("https://localhost:5001/todohub")
                .Build();
         }
 
-        public async Task Start()
+        public void Configure(Action<TodoItem> callback)
         {
             connection.On("RemoteItemAdded", callback);
+        }
 
+        public async Task Start()
+        {
             await connection.StartAsync();
         }
+
 
         public async Task AddItem(TodoItem newItem)
         {
